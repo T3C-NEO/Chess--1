@@ -26,8 +26,20 @@ public class move : MonoBehaviour
     public List<GameObject[]> rows = new List<GameObject[]>();
     public List<GameObject[]> cols = new List<GameObject[]>();
 
-    public int posX = 2;
-    public int posY = 4;
+    public int posX;
+    public int posY;
+
+    public int lastPosX;
+    public int lastPosY;
+
+    public bool blackTurn = false;
+
+    GameObject currentPiece;
+
+    public GameObject[] Pieces;
+
+    public int enemyPosX;
+    public int enemyPosY;
 
     // Start is called before the first frame update
     void Start()
@@ -59,41 +71,95 @@ public class move : MonoBehaviour
 
         if (Physics.Raycast(beam, out hit) && Input.GetMouseButtonDown(0) && hit.rigidbody != null)
         {
-            if (hit.rigidbody.tag == "Rook")
-            {      
+            if (hit.rigidbody.tag == "Rook" && blackTurn == hit.rigidbody.GetComponent<local>().black)
+            {
+                currentPiece = hit.rigidbody.gameObject;
+                posX = currentPiece.GetComponent<local>().posX;
+                posY = currentPiece.GetComponent<local>().posY;
+                lastPosX = currentPiece.GetComponent<local>().lastPosX;
+                lastPosY = currentPiece.GetComponent<local>().lastPosY;
                 for (int i = posX; i <= 7; i++)
                 {
                     rows[posY - 1][i].SetActive(true);
+                    if (rows[posY - 1][i].GetComponent<local>().filled == true)
+                    {
+                        enemyPosX = rows[posY - 1][i].GetComponent<local>().posX;
+                        enemyPosY = rows[posY - 1][i].GetComponent<local>().posY;
+                        rows[posY - 1][i].SetActive(false);
+                        break;
+                    }
                 }
                 for (int i = posX - 2; i >= 0; i--)
                 {
                     rows[posY - 1][i].SetActive(true);
+                    if (rows[posY - 1][i].GetComponent<local>().filled == true)
+                    {
+                        enemyPosX = rows[posY - 1][i].GetComponent<local>().posX;
+                        enemyPosY = rows[posY - 1][i].GetComponent<local>().posY;
+                        rows[posY - 1][i].SetActive(false);
+                        break;
+                    }
                 }
-            
+
                 for (int i = posY; i <= 7; i++)
                 {
                     cols[posX - 1][i].SetActive(true);
+                    if (cols[posX - 1][i].GetComponent<local>().filled == true)
+                    {
+                        enemyPosX = rows[posY - 1][i].GetComponent<local>().posX;
+                        enemyPosY = rows[posY - 1][i].GetComponent<local>().posY;
+                        cols[posX - 1][i].SetActive(false);
+                        break;
+                    }
                 }
                 for (int i = posY - 2; i >= 0; i--)
                 {
                     cols[posX - 1][i].SetActive(true);
+                    if (cols[posX - 1][i].GetComponent<local>().filled == true)
+                    {
+                        enemyPosX = rows[posY - 1][i].GetComponent<local>().posX;
+                        enemyPosY = rows[posY - 1][i].GetComponent<local>().posY;
+                        cols[posX - 1][i].SetActive(false);
+                        break;
+                    }
                 }
             }
 
-            if (hit.rigidbody.tag == "Finish")
+            if (hit.rigidbody.tag == "Rook" && blackTurn != hit.rigidbody.GetComponent<local>().black)
             {
-                
-                transform.position = new Vector3(hit.rigidbody.transform.position.x, transform.position.y, hit.rigidbody.transform.position.z);
-                posX = hit.rigidbody.GetComponent<local>().posX;
-                posY = hit.rigidbody.GetComponent<local>().posY;
-                for (int i = 0; i < rows[posY - 1].Length; i++)
+                if (enemyPosX == hit.rigidbody.GetComponent<local>().posX && enemyPosY == hit.rigidbody.GetComponent<local>().posY)
                 {
-                    rows[posY - 1][i].SetActive(false);
+                    currentPiece.transform.position = new Vector3(hit.rigidbody.transform.position.x, 1, hit.rigidbody.transform.position.z);
+                    Destroy(hit.rigidbody);
+
+                    blackTurn = !blackTurn;
                 }
-                for (int i = 0; i < cols[posX - 1].Length; i++)
+            }
+
+            if (hit.rigidbody.tag == "Space")
+            {
+
+                currentPiece.transform.position = new Vector3(hit.rigidbody.transform.position.x, 1, hit.rigidbody.transform.position.z);
+                hit.rigidbody.GetComponent<local>().filled = true;
+                currentPiece.GetComponent<local>().posX = hit.rigidbody.GetComponent<local>().posX;
+                currentPiece.GetComponent<local>().posY = hit.rigidbody.GetComponent<local>().posY;
+
+                for (int i = 0; i < rows[lastPosY - 1].Length; i++)
                 {
-                    cols[posX - 1][i].SetActive(false);
+                    if (rows[lastPosY - 1][i].GetComponent<local>().posX == lastPosX)
+                    {
+                        rows[lastPosY - 1][i].GetComponent<local>().filled = false;
+                    }
+                        rows[lastPosY - 1][i].SetActive(false);
                 }
+                for (int i = 0; i < cols[lastPosX - 1].Length; i++)
+                {
+                    cols[lastPosX - 1][i].SetActive(false);
+                }
+                currentPiece.GetComponent<local>().lastPosX = currentPiece.GetComponent<local>().posX;
+                currentPiece.GetComponent<local>().lastPosY = currentPiece.GetComponent<local>().posY;
+
+                blackTurn = !blackTurn;
             }
             
 
