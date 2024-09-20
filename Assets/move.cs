@@ -26,6 +26,8 @@ public class move : MonoBehaviour
     public List<GameObject[]> rows = new List<GameObject[]>();
     public List<GameObject[]> cols = new List<GameObject[]>();
 
+    public List<GameObject> enemies = new List<GameObject>();
+
     public int posX;
     public int posY;
 
@@ -40,6 +42,10 @@ public class move : MonoBehaviour
 
     public int enemyPosX;
     public int enemyPosY;
+
+    bool selected = false;
+
+    int itwo;
 
     // Start is called before the first frame update
     void Start()
@@ -71,8 +77,9 @@ public class move : MonoBehaviour
 
         if (Physics.Raycast(beam, out hit) && Input.GetMouseButtonDown(0) && hit.rigidbody != null)
         {
-            if (hit.rigidbody.tag == "Rook" && blackTurn == hit.rigidbody.GetComponent<local>().black)
+            if (hit.rigidbody.tag == "Rook" && blackTurn == hit.rigidbody.GetComponent<local>().black && selected == false)
             {
+                selected = true;
                 currentPiece = hit.rigidbody.gameObject;
                 posX = currentPiece.GetComponent<local>().posX;
                 posY = currentPiece.GetComponent<local>().posY;
@@ -83,8 +90,8 @@ public class move : MonoBehaviour
                     rows[posY - 1][i].SetActive(true);
                     if (rows[posY - 1][i].GetComponent<local>().filled == true)
                     {
-                        enemyPosX = rows[posY - 1][i].GetComponent<local>().posX;
-                        enemyPosY = rows[posY - 1][i].GetComponent<local>().posY;
+
+                        enemies.Add(rows[posY - 1][i]);
                         rows[posY - 1][i].SetActive(false);
                         break;
                     }
@@ -94,8 +101,7 @@ public class move : MonoBehaviour
                     rows[posY - 1][i].SetActive(true);
                     if (rows[posY - 1][i].GetComponent<local>().filled == true)
                     {
-                        enemyPosX = rows[posY - 1][i].GetComponent<local>().posX;
-                        enemyPosY = rows[posY - 1][i].GetComponent<local>().posY;
+                        enemies.Add(rows[posY - 1][i]);
                         rows[posY - 1][i].SetActive(false);
                         break;
                     }
@@ -106,8 +112,7 @@ public class move : MonoBehaviour
                     cols[posX - 1][i].SetActive(true);
                     if (cols[posX - 1][i].GetComponent<local>().filled == true)
                     {
-                        enemyPosX = rows[posY - 1][i].GetComponent<local>().posX;
-                        enemyPosY = rows[posY - 1][i].GetComponent<local>().posY;
+                        enemies.Add(cols[posX - 1][i]);
                         cols[posX - 1][i].SetActive(false);
                         break;
                     }
@@ -117,22 +122,114 @@ public class move : MonoBehaviour
                     cols[posX - 1][i].SetActive(true);
                     if (cols[posX - 1][i].GetComponent<local>().filled == true)
                     {
-                        enemyPosX = rows[posY - 1][i].GetComponent<local>().posX;
-                        enemyPosY = rows[posY - 1][i].GetComponent<local>().posY;
+                        enemies.Add(cols[posX - 1][i]);
                         cols[posX - 1][i].SetActive(false);
                         break;
                     }
                 }
             }
-
-            if (hit.rigidbody.tag == "Rook" && blackTurn != hit.rigidbody.GetComponent<local>().black)
+            if (hit.rigidbody.tag == "Bishop" && blackTurn == hit.rigidbody.GetComponent<local>().black && selected == false)
             {
-                if (enemyPosX == hit.rigidbody.GetComponent<local>().posX && enemyPosY == hit.rigidbody.GetComponent<local>().posY)
+                selected = true;
+                currentPiece = hit.rigidbody.gameObject;
+                posX = currentPiece.GetComponent<local>().posX;
+                posY = currentPiece.GetComponent<local>().posY;
+                lastPosX = currentPiece.GetComponent<local>().lastPosX;
+                lastPosY = currentPiece.GetComponent<local>().lastPosY;
+                itwo = 1;   
+                //for (int i = posX; i <= 7 && ((posY - 1) + itwo) <= 7; i++)
+                for (int i = posX; i < 7 && ((posY - 1) + itwo) < 7; i++)
                 {
-                    currentPiece.transform.position = new Vector3(hit.rigidbody.transform.position.x, 1, hit.rigidbody.transform.position.z);
-                    Destroy(hit.rigidbody);
+                    rows[(posY-1) + itwo][i].SetActive(true);
+                    if (rows[(posY - 1) + itwo][i].GetComponent<local>().filled == true)
+                    {
 
-                    blackTurn = !blackTurn;
+                        enemies.Add(rows[(posY - 1) + i][i]);
+                        rows[(posY - 1) + itwo][i].SetActive(false);
+                        break;
+                    }
+                    itwo++;
+                }
+                itwo = 1;
+                for (int i = posX-2; i > 0 && ((posY - 1) + itwo) < 7; i--)
+                {
+                    rows[(posY - 1) + itwo][i].SetActive(true);
+                    if (rows[(posY - 1) + itwo][i].GetComponent<local>().filled == true)
+                    {
+
+                        enemies.Add(rows[(posY - 1) + i][i]);
+                        rows[(posY - 1) + itwo][i].SetActive(false);
+                        break;
+                    }
+                    itwo++;
+
+                }
+                itwo = -1;
+                for (int i = posX - 2; i > 0 && ((posY - 1) + itwo) > 0; i--)
+                {
+                    rows[(posY - 1) + itwo][i].SetActive(true);
+                    if (rows[(posY - 1) + itwo][i].GetComponent<local>().filled == true)
+                    {
+
+                        enemies.Add(rows[(posY - 1) + i][i]);
+                        rows[(posY - 1) + itwo][i].SetActive(false);
+                        break;
+                    }
+                    itwo--;
+
+                }
+                
+                itwo = -1;
+                for (int i = posX; i < 7 && ((posY - 1) + itwo) > 0; i++)
+                {
+                    rows[(posY - 1) + itwo][i].SetActive(true);
+                    if (rows[(posY - 1) + itwo][i].GetComponent<local>().filled == true)
+                    {
+
+                        enemies.Add(rows[(posY - 1) + i][i]);
+                        rows[(posY - 1) + itwo][i].SetActive(false);
+                        break;
+                    }
+                    itwo--;
+
+                }
+            }
+
+            if (hit.rigidbody.tag == "Rook" && currentPiece.GetComponent<local>().black != hit.rigidbody.GetComponent<local>().black)
+            {
+                for (int j = 0; j < enemies.Count; j++)
+                {
+                    if (enemies[j].GetComponent<local>().posX == hit.rigidbody.GetComponent<local>().posX && enemies[j].GetComponent<local>().posY == hit.rigidbody.GetComponent<local>().posY)
+                    {
+
+                        currentPiece.transform.position = new Vector3(hit.rigidbody.transform.position.x, 1, hit.rigidbody.transform.position.z);
+
+                        currentPiece.GetComponent<local>().posX = hit.rigidbody.GetComponent<local>().posX;
+                        currentPiece.GetComponent<local>().posY = hit.rigidbody.GetComponent<local>().posY;
+
+                        for (int i = 0; i < rows[lastPosY - 1].Length; i++)
+                        {
+                            if (rows[lastPosY - 1][i].GetComponent<local>().posX == lastPosX)
+                            {
+                                rows[lastPosY - 1][i].GetComponent<local>().filled = false;
+                            }
+                            rows[lastPosY - 1][i].SetActive(false);
+                        }
+                        for (int i = 0; i < cols[lastPosX - 1].Length; i++)
+                        {
+                            cols[lastPosX - 1][i].SetActive(false);
+                        }
+                        currentPiece.GetComponent<local>().lastPosX = currentPiece.GetComponent<local>().posX;
+                        currentPiece.GetComponent<local>().lastPosY = currentPiece.GetComponent<local>().posY;
+
+                        Destroy(hit.rigidbody.gameObject);
+
+                        selected = false;
+                        if (enemies.Count > 0)
+                            enemies.Clear();
+                        blackTurn = !blackTurn;
+                        break;
+                    }
                 }
             }
 
@@ -159,6 +256,9 @@ public class move : MonoBehaviour
                 currentPiece.GetComponent<local>().lastPosX = currentPiece.GetComponent<local>().posX;
                 currentPiece.GetComponent<local>().lastPosY = currentPiece.GetComponent<local>().posY;
 
+                selected = false;
+                if (enemies.Count > 0)
+                    enemies.Clear();
                 blackTurn = !blackTurn;
             }
             
