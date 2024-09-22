@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class move : MonoBehaviour
 {
@@ -49,6 +50,7 @@ public class move : MonoBehaviour
 
     public GameObject WW;
     public GameObject BW;
+    public GameObject W;
 
     // Start is called before the first frame update
     void Start()
@@ -469,6 +471,10 @@ public class move : MonoBehaviour
                                 }
                                 rows[posY][i].SetActive(false);
                             }
+                            if (rows[posY][i].GetComponent<local>().posX != posX)
+                            {
+                                rows[posY][i].SetActive(false);
+                            }
                         }
                     }
                     else if (posX == 8)
@@ -482,6 +488,10 @@ public class move : MonoBehaviour
                                 {
                                     enemies.Add(rows[posY][i]);
                                 }
+                                rows[posY][i].SetActive(false);
+                            }
+                            if (rows[posY][i].GetComponent<local>().posX != posX)
+                            {
                                 rows[posY][i].SetActive(false);
                             }
                         }
@@ -514,7 +524,6 @@ public class move : MonoBehaviour
                                 cols[posX - 1][j].SetActive(false);
                                 break;
                             }
-                            currentPiece.GetComponent<local>().pawnMoved = true;
                         }
                     } 
                         
@@ -534,6 +543,10 @@ public class move : MonoBehaviour
                                 }
                                 rows[posY - 2][i].SetActive(false);
                             }
+                            if (rows[posY][i].GetComponent<local>().posX != posX)
+                            {
+                                rows[posY][i].SetActive(false);
+                            }
                         }
                     }
                     else if (posX == 8)
@@ -548,6 +561,10 @@ public class move : MonoBehaviour
                                     enemies.Add(rows[posY-2][i]);
                                 }
                                 rows[posY-2][i].SetActive(false);
+                            }
+                            if (rows[posY][i].GetComponent<local>().posX != posX)
+                            {
+                                rows[posY][i].SetActive(false);
                             }
                         }
                     }
@@ -568,6 +585,10 @@ public class move : MonoBehaviour
                             {
                                 rows[posY-2][i].SetActive(false);
                             }
+                            if (rows[posY][i].GetComponent<local>().posX != posX)
+                            {
+                                rows[posY][i].SetActive(false);
+                            }
                         }
                     }
                     if (currentPiece.GetComponent<local>().pawnMoved == false && rows[posY-2][posX - 1].active == true)
@@ -580,7 +601,6 @@ public class move : MonoBehaviour
                                 cols[posX - 1][j].SetActive(false);
                                 break;
                             }
-                            currentPiece.GetComponent<local>().pawnMoved = true;
                         }
                     }
 
@@ -613,6 +633,7 @@ public class move : MonoBehaviour
 
                         currentPiece.GetComponent<local>().lastPosX = currentPiece.GetComponent<local>().posX;
                         currentPiece.GetComponent<local>().lastPosY = currentPiece.GetComponent<local>().posY;
+                        currentPiece.GetComponent<local>().pawnMoved = true;
 
                         if (hit.rigidbody.tag == "King")
                         {
@@ -624,6 +645,7 @@ public class move : MonoBehaviour
                                 WW.SetActive(true);
                             }
                             selected = true;
+                            W.SetActive(true);
                         }
                         Destroy(hit.rigidbody.gameObject);
 
@@ -669,6 +691,7 @@ public class move : MonoBehaviour
                 */
                 currentPiece.GetComponent<local>().lastPosX = currentPiece.GetComponent<local>().posX;
                 currentPiece.GetComponent<local>().lastPosY = currentPiece.GetComponent<local>().posY;
+                currentPiece.GetComponent<local>().pawnMoved = true;
 
                 selected = false;
                 if (enemies.Count > 0)
@@ -689,5 +712,9 @@ public class move : MonoBehaviour
             }
             */
         }
+    }
+    public void Restart()
+    {
+        SceneManager.LoadScene(0);
     }
 }
