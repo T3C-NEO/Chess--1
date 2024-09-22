@@ -14,4 +14,6 @@ public class local : MonoBehaviour
 
     public bool filled;
 
+    public bool pawnMoved = false;
+
 }
